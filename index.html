@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Checks</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#1565c0">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Checks">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="logo.png">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+    }
+
+    body {
+      padding: 4px;
+      padding-top: env(safe-area-inset-top);
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+
+    .logo-container {
+      position: relative;
+      text-align: center;
+      margin-bottom: 6px;
+    }
+
+    .logo {
+      width: 100%;
+      max-width: 900px;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+    }
+
+    .initials-button {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+
+  min-width: 70px;
+  height: 42px;
+
+  border-radius: 21px;
+  border: none;
+
+background: #185fa7;
+  color: white;
+
+  font-size: 1.2rem;
+  font-weight: 900;
+
+  padding: 0 12px;
+
+  box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+}
+
+    .info-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 6px;
+      font-size: 0.85rem;
+      color: #333;
+      font-weight: bold;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      align-items: center;
+    }
+
+    .legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .updated {
+      white-space: nowrap;
+    }
+
+    .row {
+      display: flex;
+      gap: 3px;
+      width: 100%;
+      margin-bottom: 5px;
+    }
+
+    a {
+      text-decoration: none;
+      color: white;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-weight: bold;
+      overflow: hidden;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .mainButton {
+      width: 38vw;
+      min-width: 38vw;
+      max-width: 38vw;
+      height: 100px;
+      padding: 6px;
+      font-size: 2.1rem;
+      line-height: 1.0;
+      font-weight: 900;
+      word-break: break-word;
+    }
+
+    .numberButton {
+      flex: 1;
+      min-width: 0;
+      height: 100px;
+      font-size: 3.5rem;
+      line-height: 1;
+      font-weight: 900;
+      padding: 0;
+      position: relative;
+    }
+
+    .numberButton.missingBadge::after {
+      content: "!";
+      position: absolute;
+      top: 4px;
+      right: 5px;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: white;
+      color: #7b1fa2;
+      font-size: 1rem;
+      line-height: 22px;
+      font-weight: 900;
+    }
+
+.bay,
+.airway,
+.circulation,
+.sideboard,
+.panda,
+.paediatric,
+.halo,
+.access,
+.drugs,
+.sepsis,
+.default {
+  background: #185fa7;
+}
+
+    .status-today {
+      background: #2e7d32 !important;
+    }
+
+    .status-recent {
+      background: #f9a825 !important;
+      color: black !important;
+    }
+
+  .status-old {
+  background: #e53935 !important;
+}
+
+    .status-missing {
+      background: #7b1fa2 !important;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 20px;
+      color: #666;
+      font-size: 1.5rem;
+    }
+
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      z-index: 999;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .modal {
+      background: white;
+      color: #111;
+      width: 100%;
+      max-width: 440px;
+      border-radius: 14px;
+      padding: 18px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+      font-size: 1.05rem;
+    }
+
+    .modal h2 {
+      margin: 0 0 10px 0;
+      font-size: 1.5rem;
+    }
+
+    .modal p {
+      margin: 6px 0;
+    }
+
+    .modal ul {
+      margin: 8px 0 0 20px;
+      padding: 0;
+    }
+
+    .modal-close {
+      margin-top: 14px;
+      width: 100%;
+      height: 46px;
+      border: none;
+      border-radius: 8px;
+      background: #1565c0;
+      color: white;
+      font-size: 1.1rem;
+      font-weight: bold;
+    }
+
+    @media (max-width: 450px) {
+      .mainButton {
+        width: 38vw;
+        min-width: 38vw;
+        max-width: 38vw;
+        height: 100px;
+        font-size: 1.9rem;
+      }
+
+      .numberButton {
+        height: 100px;
+        font-size: 3.5rem;
+      }
+
+      .info-bar {
+        font-size: 0.72rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="logo-container">
+  <img src="logo.png" alt="ResusPro" class="logo">
+  <button id="initialsDisplay" class="initials-button" onclick="changeInitials()">--</button>
+</div>
+
+<div class="info-bar">
+<div class="legend">
+
+  <span style="background:#2e7d32;color:white;padding:2px 8px;border-radius:12px;">
+    This Week
+  </span>
+
+  <span style="background:#f9a825;color:black;padding:2px 8px;border-radius:12px;">
+    This Month
+  </span>
+
+  <span style="background:#e53935;color:white;padding:2px 8px;border-radius:12px;">
+    &gt;4wks
+  </span>
+
+  <span style="background:#7b1fa2;color:white;padding:2px 8px;border-radius:12px;">
+    Problem
+  </span>
+
+</div>
+  <div id="updatedTime" class="updated">Updated: --:--</div>
+</div>
+
+<div id="links" class="loading">
+  Loading...
+</div>
+
+<div id="detailsModal" class="modal-backdrop" onclick="closeDetails(event)">
+  <div class="modal">
+    <h2 id="detailsTitle">Check details</h2>
+    <div id="detailsBody"></div>
+    <button class="modal-close" onclick="hideDetails()">Close</button>
+  </div>
+</div>
+
+<script>
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzMVQdQQRGY0pbYAfhyC_QfsE3z3_TjQQ8KmAw8rH5ug8O1R-ZZsQqSRrhHDDlrq9DedQ/exec';
+
+const INITIALS_FIELDS = [
+  {
+    formId: '1FAIpQLScODT7eT-WbtPulyqL1HQT7xXO1dGigSIAvwWppNHIih6o17w',
+    entryId: 'entry.1846575652'
+  },
+  {
+    formId: '1FAIpQLSdmrMfo7-8c2SgqoTGSibMRM0sqhRkwAU15E7Rz1hFiizMy6g',
+    entryId: 'entry.1242685308'
+  },
+  {
+    formId: '1FAIpQLSf8Kx8YGZ_T03jFu89-K8qMVD6qhEPbZCOjBwQjkXlzWh9srw',
+    entryId: 'entry.1427296189'
+  },
+  {
+    formId: '1FAIpQLSe-3L4xN146xTI7IYAeyPnHNcc_sLIiuCwqkNXoafbGlL_6ag',
+    entryId: 'entry.1470407294'
+  },
+  {
+    formId: '1FAIpQLSedgA78qV_cIgbXqB7t0wmtJ7oegwAWICqRKZbQIMXC1kUi0w',
+    entryId: 'entry.1470407294'
+  },
+  {
+    formId: '1FAIpQLSdIdr74kNPcnjeelrmiC1fgQsdpYoSmJ8m1hVoutSW_G2KxAA',
+    entryId: 'entry.1470407294'
+  },
+  {
+    formId: '1FAIpQLScGuWlu1iI37_DXOR213cMHER2w38mSdojoTO3EC_pgKP5n0Q',
+    entryId: 'entry.1470407294'
+  },
+  {
+    formId: '1FAIpQLScAGntDSO1jzGKr_v45_LB6TizdE9Hy4Z8JmTBnbBLID266RA',
+    entryId: 'entry.1470407294'
+  },
+  {
+    formId: '1FAIpQLSfjMPnoyIpv5Wj3ZckjmWL_pOm9GglRfyLYl1Aj7DIckjU6cQ',
+    entryId: 'entry.1470407294'
+  },
+  {
+    formId: '1FAIpQLSfP-awAEhaV7IrfgkrvOvQA1dhM9mMDWMOki0BSrzbF67to0Q',
+    entryId: 'entry.1470407294'
+  }
+];
+
+let checkStatus = {};
+let lastGeneratedAt = null;
+
+function getInitials() {
+  let initials = localStorage.getItem('resuspro_initials');
+
+  if (!initials) {
+    initials = prompt('Enter your initials for this device, e.g. NF');
+
+    if (initials) {
+      initials = initials.trim().toUpperCase();
+      localStorage.setItem('resuspro_initials', initials);
+    }
+  }
+
+  updateInitialsDisplay();
+  return initials || '';
+}
+
+function updateInitialsDisplay() {
+  const initials = localStorage.getItem('resuspro_initials') || '--';
+  document.getElementById('initialsDisplay').textContent = initials;
+}
+
+function changeInitials() {
+  const current = localStorage.getItem('resuspro_initials') || '';
+  const initials = prompt('Enter initials for this device:', current);
+
+  if (initials !== null) {
+    localStorage.setItem('resuspro_initials', initials.trim().toUpperCase());
+    updateInitialsDisplay();
+    renderExistingButtonsWithUpdatedInitials();
+  }
+}
+
+function addInitialsToUrl(url) {
+  const initials = getInitials();
+
+  if (!initials) return url;
+
+  const match = INITIALS_FIELDS.find(item => url.includes(item.formId));
+  if (!match) return url;
+
+  const entryId = match.entryId;
+  const encodedInitials = encodeURIComponent(initials);
+
+  if (url.includes(entryId + '=')) {
+    return url.replace(
+      new RegExp(entryId + '=[^&]*'),
+      entryId + '=' + encodedInitials
+    );
+  }
+
+  const separator = url.includes('?') ? '&' : '?';
+  return url + separator + 'usp=pp_url&' + entryId + '=' + encodedInitials;
+}
+
+function getCategoryClass(text) {
+  text = text.toLowerCase();
+
+  if (text.includes("bay")) return "bay";
+  if (text.includes("airway")) return "airway";
+  if (text.includes("circulation")) return "circulation";
+  if (text.includes("sideboard")) return "sideboard";
+  if (text.includes("panda")) return "panda";
+  if (text.includes("paediatric")) return "paediatric";
+  if (text.includes("halo")) return "halo";
+  if (text.includes("access")) return "access";
+  if (text.includes("drug")) return "drugs";
+  if (text.includes("sepsis")) return "sepsis";
+
+  return "default";
+}
+
+function getStatusClass(category, number) {
+  if (!checkStatus[category]) return 'status-old';
+  if (!checkStatus[category][number]) return 'status-old';
+
+  const colour = checkStatus[category][number].colour;
+
+  if (colour === 'missing') return 'status-missing';
+  if (colour === 'today') return 'status-today';
+  if (colour === 'recent') return 'status-recent';
+
+  return 'status-old';
+}
+
+function getStatusDetails(category, number) {
+  if (!checkStatus[category]) return null;
+  return checkStatus[category][number] || null;
+}
+
+function loadLinks() {
+  const callbackName = 'resusProCallback_' + Date.now();
+
+  window[callbackName] = function(data) {
+    checkStatus = data.status || {};
+    lastGeneratedAt = data.generatedAt || null;
+
+    renderLinks(data.rows || []);
+    updateTimeDisplay();
+
+    delete window[callbackName];
+    script.remove();
+  };
+
+  const script = document.createElement('script');
+  script.src = APPS_SCRIPT_URL + '?callback=' + callbackName + '&cacheBust=' + Date.now();
+  document.body.appendChild(script);
+}
+
+function renderLinks(rows) {
+  const container = document.getElementById('links');
+  container.className = '';
+  container.innerHTML = '';
+
+  rows.forEach(row => {
+    const rowDiv = document.createElement('div');
+    rowDiv.className = 'row';
+
+    let rowColour = 'default';
+    let rowTitle = '';
+
+    row.forEach((item, index) => {
+      const btn = document.createElement('a');
+      btn.href = addInitialsToUrl(item.url);
+      btn.target = '_blank';
+      btn.dataset.originalUrl = item.url;
+
+      if (index === 0) {
+        rowColour = getCategoryClass(item.title);
+        rowTitle = item.title.replace(/ trolley$/i,'').replace(/:.*$/,'');
+
+        btn.className = 'mainButton ' + rowColour;
+        btn.textContent = rowTitle;
+      } else {
+        const match = item.title.match(/:\s*(\d+)/);
+        const number = match ? match[1] : String(index);
+        const statusClass = getStatusClass(rowColour, number);
+        const details = getStatusDetails(rowColour, number);
+
+        btn.className = 'numberButton ' + statusClass;
+        btn.textContent = number;
+
+        if (details && details.hasMissing) {
+          btn.classList.add('missingBadge');
+        }
+
+        setupLongPress(btn, rowTitle, rowColour, number);
+      }
+
+      rowDiv.appendChild(btn);
+    });
+
+    container.appendChild(rowDiv);
+  });
+}
+
+function renderExistingButtonsWithUpdatedInitials() {
+  document.querySelectorAll('a[data-original-url]').forEach(btn => {
+    btn.href = addInitialsToUrl(btn.dataset.originalUrl);
+  });
+}
+
+function updateTimeDisplay() {
+  const el = document.getElementById('updatedTime');
+  const date = lastGeneratedAt ? new Date(lastGeneratedAt) : new Date();
+
+  const time = date.toLocaleTimeString([], {
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+
+  el.textContent = 'Updated: ' + time;
+}
+
+function setupLongPress(element, rowTitle, category, number) {
+  let timer = null;
+  let longPressTriggered = false;
+
+  element.addEventListener('touchstart', function() {
+    longPressTriggered = false;
+
+    timer = setTimeout(function() {
+      longPressTriggered = true;
+      showDetails(rowTitle, category, number);
+    }, 650);
+  });
+
+  element.addEventListener('touchend', function(event) {
+    clearTimeout(timer);
+
+    if (longPressTriggered) {
+      event.preventDefault();
+    }
+  });
+
+  element.addEventListener('touchmove', function() {
+    clearTimeout(timer);
+  });
+
+  element.addEventListener('mousedown', function() {
+    longPressTriggered = false;
+
+    timer = setTimeout(function() {
+      longPressTriggered = true;
+      showDetails(rowTitle, category, number);
+    }, 650);
+  });
+
+  element.addEventListener('mouseup', function(event) {
+    clearTimeout(timer);
+
+    if (longPressTriggered) {
+      event.preventDefault();
+    }
+  });
+
+  element.addEventListener('mouseleave', function() {
+    clearTimeout(timer);
+  });
+}
+
+function showDetails(rowTitle, category, number) {
+  const details = getStatusDetails(category, number);
+
+  document.getElementById('detailsTitle').textContent = rowTitle + ' ' + number;
+
+  let html = '';
+
+  if (!details) {
+    html += '<p><strong>Status:</strong> No previous check found</p>';
+  } else {
+    html += '<p><strong>Last checked:</strong> ' + (details.lastCheckedDisplay || 'Unknown') + '</p>';
+
+    if (details.ageDays === 0) {
+      html += '<p><strong>Age:</strong> This Week</p>';
+    } else if (details.ageDays !== null && details.ageDays !== undefined) {
+      html += '<p><strong>Age:</strong> ' + details.ageDays + ' days ago</p>';
+    }
+
+    if (details.checkedBy) {
+      html += '<p><strong>Checked by:</strong> ' + details.checkedBy + '</p>';
+    }
+
+    if (details.hasMissing) {
+      html += '<p><strong>Missing items:</strong> ' + details.missingCount + '</p>';
+      html += '<ul>';
+
+      details.missingItems.forEach(item => {
+        html += '<li>' + escapeHtml(item) + '</li>';
+      });
+
+      html += '</ul>';
+    } else {
+      html += '<p><strong>Missing items:</strong> None recorded</p>';
+    }
+  }
+
+  document.getElementById('detailsBody').innerHTML = html;
+  document.getElementById('detailsModal').style.display = 'flex';
+}
+
+function hideDetails() {
+  document.getElementById('detailsModal').style.display = 'none';
+}
+
+function closeDetails(event) {
+  if (event.target.id === 'detailsModal') {
+    hideDetails();
+  }
+}
+
+function escapeHtml(text) {
+  return String(text).replace(/[&<>"']/g, function(char) {
+    return {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#039;'
+    }[char];
+  });
+}
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js');
+}
+
+updateInitialsDisplay();
+getInitials();
+loadLinks();
+
+setInterval(loadLinks, 60000);
+</script>
+
+</body>
+</html>

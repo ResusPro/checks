@@ -1,8 +1,8 @@
 {
   "name": "Checks",
   "short_name": "Checks",
-  "start_url": "/",
-  "scope": "/",
+  "start_url": "/checks/",
+  "scope": "/checks/",
   "display": "standalone",
   "background_color": "#f2f2f2",
   "theme_color": "#1565c0",
